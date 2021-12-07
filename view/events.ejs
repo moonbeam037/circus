@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a href="#" class="navbar-brand">Цирк "Шапито"</a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a href="/home" class="nav-link">Домашняя</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="/events" class="nav-link">Все мероприятия</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <button id="exitBtn" class="btn btn-danger my-2 my-lg-0">Выйти</button>
+    </nav>
+    <div class="container">
+        <h3 class="offset-md-4 my-lg-3">Предстоящие мероприятия </h3>
+        <% for (let event of next) { %>
+            <div class="card col-md-8 my-lg-3 offset-md-2 text-center">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <%=event.name%>, <%=event.city%>
+                    </h5>
+                    <p class="card-text">
+                        <%=event.dateof%>
+                    </p>
+                    <a href="/event?id=<%=event.id%>" class="btn btn-primary">Купить билет</a>
+                </div>
+            </div>
+            <% } %>
+                <h3 class="offset-md-4 my-lg-3">Прошедшие мероприятия </h3>
+                <% for (let event of previous) { %>
+                    <div class="card col-md-8 my-lg-3 offset-md-2 text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <%=event.name%>, <%=event.city%>
+                            </h5>
+                            <p class="card-text">
+                                <%=event.dateof%>
+                            </p>
+                            <a class="btn btn-primary disabled">Купить билет</a>
+                        </div>
+                    </div>
+                    <% } %>
+    </div>
+    <%- include('footer.ejs') %>
+        <script>
+            function chooseCity(item) {
+                $('#cityMenuButton')[0].textContent = $(item)[0].textContent;
+                $.ajax({
+                    type: "method",
+                    url: "/citychoose",
+                    data: { city: $(item)[0].textContent },
+                    method: 'POST',
+                    success: (res) => {
+                        data = JSON.parse(res);
+                        for (let obj of data) {
+                            $('#eventList').empty();
+                            console.log(obj);
+                            let months = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'];
+                            let date = new Date(obj.dateof);
+                            let str = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+                            let text = `${obj.name}. Дата: ${str}`;
+                            let btn = $(`<button type="button" class="dropdown-item">${text}</button>`);
+                            $('#eventList').append(btn);
+                        }
+                        $('#eventMenuButton').removeClass('disabled');
+                    },
+                    error: (err) => {
+                        console.error(err);
+                    }
+                });
+            }
+        </script>
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+.change-form {
+    padding-bottom: 20px;
+}
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#tableList {
+    min-width: 10em;
+}
+.err404 {
+    font-size: 2em;
+}
+.text-block {
+    margin-top: 30%;
+}
+.event-wrapper {
+    width: 100%;
+    background-color: yellow;
+    font-size: 1.5em;
+    padding: 1em;
+}
+
+td{
+    text-align: center;
+}
+th{
+    text-align: center;
+}
+
+.ticket-event {
+    background-color: #fff;
+    transition: 0.25 ease all;
+}
+.ticket-event:hover {
+    background-color: #eee;
+    transition: 0.25 all;
+}

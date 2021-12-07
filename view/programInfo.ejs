@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container-fluid">
+    <div class="row">
+    <a href="/admin" class="btn btn-primary">Вернуться на главную</a>
+</div>
+<div class="row"> 
+    <table id="tab" class="table table-bordered">
+        <h3 class="offset-md-5">Выступления.</h3>
+        <thead class="thead-light">
+        <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Название выступления
+                </th>
+                <th>
+                    Жанр
+                </th>
+                <th>
+                    Продолжительность (минут)
+                </th>
+        </tr>
+        </thead>
+        <% for (let row of data) { %>
+            <tr>
+            <td><%=row.id%></td>
+            <td><%=row.name%></td>
+            <td><%=row.genre%></td>
+            <td><%=row.minutescount%></td>
+        </tr>
+            <% } %>
+    </table>
+</div>
+    <%- include('footer.ejs') %> 
+    <script>
+
+    </script>
+
+</body>
+</html>

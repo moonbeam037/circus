@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <form class="col-md-3 offset-md-4" style="margin-top: 20%;">
+        <div class="form-group">
+          <label for="exampleInputLogin">Логин</label>
+          <input type="text" class="form-control" id="exampleInputLogin" placeholder="Введите логин">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPassword1">Пароль</label>
+          <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Введите пароль">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPassword2">Подтверждение</label>
+          <input type="password" class="form-control" id="exampleInputPassword2" placeholder="Подтвердите пароль">
+        </div>
+        <div class="from-group">
+          <button id="regBtn" type="button" class="btn btn-primary">Зарегистрироваться</button>
+        </div>
+        <div class="form-group my-lg-2">
+          Уже создали аккаунт? <a href="/login">Войти</a>
+        </div>
+        <div id="wrongpass" class="form-group" style="display: none;">
+          <small id="wrongtext" class="form-text text-danger">Пароли не совпадают!</small>
+        </div>
+      </form>
+    </div>
+  </div>
+  <%- include('footer.ejs') %>
+    <script>
+      $('#regBtn').on('click', () => {
+        $('#wrongtext')[0].textContent = "Пароли не совпадают!";
+        $('#wrongpass').hide();
+        if ($('#exampleInputPassword1')[0].value != $('#exampleInputPassword2')[0].value) {
+          $('#wrongpass').show(150);
+          return;
+        }
+        data = {};
+        data.login = $('#exampleInputLogin')[0].value;
+        data.pass = $('#exampleInputPassword1')[0].value;
+        $.ajax({
+          type: "method",
+          url: "/register",
+          data: data,
+          method: "POST",
+          success: (res) => {
+            this.location.href = "/login";
+          },
+          statusCode: {
+            403: () => {
+              $('#wrongtext')[0].textContent = "Данный логин уже занят!";
+              $('#wrongpass').show(150);
+            }
+          },
+          error: (err) => {
+            console.error(err);
+          }
+        })
+      });
+    </script>
+</body>
+
+</html>

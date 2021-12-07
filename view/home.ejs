@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a href="#" class="navbar-brand">Цирк "Шапито"</a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a href="/home" class="nav-link">Домашняя</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/events" class="nav-link">Все мероприятия</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <button id="exitBtn" class="btn btn-danger my-2 my-lg-0">Выйти</button>
+    </nav>
+    <div class="container">
+        <% if (tickets.rowCount) { %> 
+        <% for (let ticket of tickets.rows) { %> 
+        <a style="text-decoration: none; color: black;" href="/event?id=<%=ticket.id%>">
+            <div class="ticket-event card col-md-8 my-lg-3 offset-md-2 text-center">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <%=ticket.name%>, <%=ticket.city%>. <%=ticket.dateof%>
+                </h5>
+                <p class="card-text">
+                    Ряд <%=ticket.row%>, место <%=ticket.seat%> 
+                </p>
+                <p style="color: #aaa;">
+                    Билет. <%=ticket.price%>₽
+                </p>
+            </div>
+        </div>
+        </a>
+        <% } %> 
+        <% } else { %>
+            <div class="card col-md-8 my-lg-3 offset-md-2 text-center">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        Нет купленных билетов.
+                    </h5>
+                    <p class="card-text">
+                        Хотите купить билет? <a href="/events">Купить.</a>
+                    </p>
+                </div>
+            </div>
+            <% } %>  
+    </div>
+    <%- include('footer.ejs') %>
+</body>
+
+</html>

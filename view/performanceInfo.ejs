@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+    <div class="row">
+    <a href="/admin" class="btn btn-primary">Вернуться на главную</a>
+</div>
+<div class="row"> 
+    <% if (workers.rowCount > 0) { %> 
+        <h3 class="offset-md-5">Работники.</h3>
+    <table id="tab" class="table table-bordered">
+        <thead class="thead-light">
+        <tr>
+                <th scope="col">
+                    ID
+                </th scope="col">
+                <th scope="col">
+                    Имя
+                </th>
+                <th scope="col">
+                    Должность
+                </th>
+        </tr>
+    </thead>
+        <% for (let row of workers.rows) { %>
+            <tr scope="row">
+            <td><%=row.id%></td>
+            <td><%=row.name%></td>
+            <td><%=row.position%></td>
+        </tr>
+            <% } %>
+    </table>
+    <% } else { %>
+        <h3>Работников нет.</h3>
+        <% } %>  
+    <% if (animals.rowCount > 0) { %> 
+        <h3 class="offset-md-5 my-lg-3">Животные.</h3>
+    <table id="tab" class="table">
+        <thead class="thead-light">
+        <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Имя
+                </th>
+                <th>
+                    Тип животного
+                </th>
+                <th>
+                    Возраст
+                </th>
+        </tr>
+        </thead>
+        <% for (let row of animals.rows) { %>
+            <tr>
+            <td><%=row.id%></td>
+            <td><%=row.name%></td>
+            <td><%=row.type%></td>
+            <td><%=row.age%></td>
+        </tr>
+            <% } %>
+    </table>
+    <% } else { %>
+        <h3>Животных нет.</h3>
+        <% } %>  
+</div>
+    <%- include('footer.ejs') %> 
+    <script>
+
+    </script>
+
+</body>
+</html>

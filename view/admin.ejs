@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title><!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <% if (data) { %>
+            <div class="row">
+                <div class="btn-group">
+                    <button type="button" id="chooseTable" class="btn btn-primary dropdown-toggle"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%=rusTable%></button>
+                    <%- include('links.ejs') %> 
+                </div>
+                <button id="exitBtn" class="btn btn-danger" style="margin-left: auto; margin-right: 0.8em; margin-top: 0.8em;">Выйти</button>
+            </div>
+            <div class="col-md-3 offset-md-4 change-form">
+                <form id="myForm">
+                    <div class="form-group">
+                        <h3 id="tableName">
+                            <%=tableName%>
+                        </h3>
+                    </div>
+                    <% for (let field of data.fields) { %>
+                        <% if(field.name=="id" ) continue; %>
+                            <div class="form-group">
+                                <label for="<%=field.name%>">
+                                    <%=field.name%>
+                                        <% if(field.name=="typeofticket" ) { %> <span class="text-info"> *Взрослый /
+                                                Детский</span>
+                                            <% } %>
+                                </label>
+                                <input <% if (field.name.includes('date') || field.name.includes('Date')) { %>
+                                type="date" <% } else { %> type="text" <% } %> id="<%=field.name%>"
+                                            class="form-control" name="<%=field.name%>">
+                            </div>
+                            <% } %>
+                                <button type="button" id="addBtn" class="btn btn-primary">Подтвердить</button>
+                                <span style="display: none;" id="cancelSpan"><button type="button" id="cancelBtn"
+                                        onclick="cancel()" class="btn btn-danger">Отмена</button></span>
+                </form>
+            </div>
+    </div>
+    <table id="tab" class="table table-bordered">
+        <thead class="thead-light">
+        <tr>
+            <% for (let field of data.fields) { %>
+                <th>
+                    <%=field.name%>
+                </th>
+                <% } %>
+                    <th>Изменение</th>
+                    <th>Удаление</th>
+                    <% if (tableName == "event" || tableName == "program" || tableName == "performance") { %> <th>Информация</th> <% } %> 
+        </tr>
+        </thead>
+        <% for (let row of data.rows) { %>
+
+            <tr>
+                <% for(let prop of Object.values(row)) { %>
+
+                    <td><% if (prop instanceof Date) { %><%=`${prop.getFullYear()}-${prop.getMonth()+1 < 10 ? `0${prop.getMonth()+1}` :
+                                prop.getMonth()+1}-${prop.getDate() < 10 ? `0${prop.getDate()}` : prop.getDate()}`%><% } else { %><%=prop%><% } %></td>
+                    <% } %>
+                        <td>
+                            <button onclick="editItem(this)" id="editBtn" class="btn btn-info">Изменить</button>
+                        </td>
+                        <td>
+                            <button id="myBtn" onclick="deleteItem(this)" class="btn btn-danger">Удалить</button>
+                        </td>
+                        <% if (tableName == "event") { %> <td>
+                            <a href="/program?id=<%=row.id%>" class="btn btn-info">Программа</a>
+                        </td> 
+                        <% } else if (tableName == "program") { %> <td>
+                            <a href="/performances?id=<%=row.id%>" class="btn btn-info">Выступления</a>
+                        </td> 
+                        <% } else if (tableName == "performance") { %> <td>
+                            <a href="/performanceInfo?id=<%=row.id%>" class="btn btn-info">Участники</a>
+                        </td> 
+                        <% } %> 
+            </tr>
+            <% } %>
+    </table>
+    <% } else { %>
+        <h1>ERROR 404</h1>
+        <% } %>
+            </div>
+            <%- include('footer.ejs') %>
+                <script>
+                    if('<%=tableName%>' == "event") {
+                         
+                    }
+                    $('#exitBtn').on('click', () => {
+                        $.ajax({
+                            type: "method",
+                            url: "/logOut",
+                            method: "POST",
+                            success: (res) => {
+                                this.location.href = "/login";
+                            }
+                        })
+                    });
+
+                    $('#addBtn').on('click', () => {
+                        let data = {};
+                        for (let input of $('#myForm')[0]) {
+                            data[input.name] = input.value;
+                        }
+                        data['table'] = $('#tableName')[0].textContent;
+                        $.ajax({
+                            type: "method",
+                            url: "/add",
+                            data: data,
+                            method: 'POST',
+                            success: (res) => {
+                                location.reload();
+                            },
+                            error: (res) => {
+                                console.error(res.error);
+                            }
+                        });
+                    })
+
+                    function deleteItem(item) {
+                        let row = $(item).closest('tr');
+                        let index = row[0].cells[0].textContent;
+                        let data = {};
+                        data['table'] = $('#tableName')[0].textContent;
+                        data.index = index;
+                        $.ajax({
+                            type: "method",
+                            url: "/delete",
+                            data: data,
+                            method: 'POST',
+                            success: (res) => {
+                                location.reload();
+                            },
+                            error: (err) => {
+                                console.error(err);
+                            }
+                        });
+                    }
+
+                    function editItem(item) {
+                        let row = $(item).closest('tr')[0];
+                        let index = row.cells[0].textContent;
+                        for (let i = 0; i < $('#myForm')[0].length; i++) {
+                            $('#myForm')[0][i].value = row.cells[i + 1].textContent;
+                        }
+                        $('#addBtn').html('Изменить');
+                        $("#myButton").off('click');
+                        $('#addBtn').unbind('click');
+                        $('#addBtn').on('click', () => {
+                            let data = {};
+                            for (let input of $('#myForm')[0]) {
+                                data[input.name] = input.value;
+                            }
+                            data['index'] = index;
+                            data['table'] = $('#tableName')[0].textContent;
+                            $.ajax({
+                                type: "method",
+                                url: "/edit",
+                                data: data,
+                                method: 'POST',
+                                success: (res) => {
+                                    location.reload();
+                                },
+                                error: (err) => {
+                                    console.error(err);
+                                }
+                            });
+                        })
+                        $('#cancelSpan').show();
+                    }
+
+                    function cancel() {
+                        $('#addBtn').html('Submit');
+                        $('#addBtn').unbind('click');
+                        $('#addBtn').on('click', () => {
+                            let data = {};
+                            for (let input of $('#myForm')[0]) {
+                                data[input.name] = input.value;
+                            }
+                            data['table'] = $('#tableName')[0].textContent;
+                            $.ajax({
+                                type: "method",
+                                url: "/add",
+                                data: data,
+                                method: 'POST',
+                                success: (res) => {
+                                    location.reload();
+                                },
+                                error: (res) => {
+                                    console.error(res.error);
+                                }
+                            });
+                        })
+                        for (let input of $('#myForm')[0]) {
+                            input.value = "";
+                        }
+                        $('#cancelSpan').hide();
+                    }
+
+                </script>
+</body>
+
+</html>
